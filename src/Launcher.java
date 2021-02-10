@@ -3,10 +3,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
-import javax.sound.sampled.AudioInputStream; 
-import javax.sound.sampled.AudioSystem; 
 import javax.sound.sampled.Clip; 
 import javax.sound.sampled.LineUnavailableException; 
 import javax.sound.sampled.UnsupportedAudioFileException; 
@@ -22,11 +19,12 @@ public class Launcher {
 	// J Variables
 	private static JLabel countdown = new JLabel("00:00:00");
 	private static JButton pauseButton = new JButton("Pause");
+	private static JTextField inputField = new JTextField(10);
 	
 	// Sound File
-	private static String soundPath = System.getProperty("user.dir") + "/assets/sound.wav";	
-	private static AudioInputStream audioInputStream; 
+	private static String soundName = "sound.wav";
 	private static Clip clip;
+	private static Sound playSound = new Sound();
 	
 	// Misc
 	private static final String delimiter = ":";
@@ -37,12 +35,7 @@ public class Launcher {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(500, 200);
 		frame.setMinimumSize(new Dimension(500, 200));
-		frame.setVisible(true);
-
-		// ======================= SOUND =======================
-		audioInputStream = AudioSystem.getAudioInputStream(new File(soundPath).getAbsoluteFile());
-		clip = AudioSystem.getClip(); 
-		clip.open(audioInputStream);		
+		frame.setVisible(true);	
 		
 		// ======================= TOP =======================
 		// Panel for Top
@@ -63,8 +56,14 @@ public class Launcher {
 				// If CURRENT_TIME reaches 0
 				if (CURRENT_TIME <= 0) 
 					try {
-						clip.start();
-						clip.setMicrosecondPosition(0);
+						new Thread(new Runnable() {
+							
+							@Override
+							public void run() {
+								playSound.PlaySound(soundName, clip, inputField);
+							}
+							
+						}) { }.start();
 						timer.stop();
 					} catch (Exception e2) {
 						JOptionPane.showMessageDialog(null, "Error Playing Sound");
@@ -79,7 +78,6 @@ public class Launcher {
 		frame.getContentPane().add(BorderLayout.SOUTH, centerPanel);
 		
 		// Text field for input
-		JTextField inputField = new JTextField(10);
 		centerPanel.add(inputField);
 		
 		// Add Start Button 
@@ -155,5 +153,7 @@ public class Launcher {
 		frame.invalidate();
 		frame.validate();
 		frame.repaint();
-    }
+    }	
 }
+
+
