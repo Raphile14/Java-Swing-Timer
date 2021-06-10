@@ -144,6 +144,7 @@ public class Launcher {
 				timer.stop();
 				CURRENT_TIME = 0;
 				INPUT_TIME = 0;
+				inputField.setText("");
 				countdown.setText(FormatSeconds.formatSeconds(CURRENT_TIME, delimiter));
 				pauseButton.setText("Pause");
 			}
